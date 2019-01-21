@@ -124,10 +124,11 @@ class OptimizeWorker:
 
     def load_model(self):            
         for entry in self.dbx.files_list_folder('/model').entries:
-            md, res = self.dbx.files_download('/model/'+entry.name)
-            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
-            #with open('./data/model/'+entry.name, 'wb') as f:  
-                f.write(res.content)
+            if entry.name != 'next_generation':
+                md, res = self.dbx.files_download('/model/'+entry.name)
+                with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
+                #with open('./data/model/'+entry.name, 'wb') as f:  
+                    f.write(res.content)
 
         from agent.model import GameModel
         model = GameModel(self.config)
