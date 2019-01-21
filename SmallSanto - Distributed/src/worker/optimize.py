@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from time import sleep
+import dropbox
 
 import keras.backend as K
 import numpy as np
@@ -26,30 +27,31 @@ class OptimizeWorker:
         self.loaded_data = {}
         self.dataset = None
         self.optimizer = None
-
+        self.dbx = None
     def start(self):
+        auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
+        self.dbx = dropbox.Dropbox(auth_token)
         self.model = self.load_model()
         self.training()
 
     def training(self):
         self.compile_model()
         last_load_data_step = last_save_step = total_steps = self.config.trainer.start_total_steps
-        #min_data_size_to_learn = 10000
+        min_data_size_to_learn = 5000
         self.load_play_data()
 
         while True:
-##            if self.dataset_size < min_data_size_to_learn:
-##                print("dataset_size=",self.dataset_size," is less than ",min_data_size_to_learn)
-##                sleep(600)
-##                self.load_play_data()
-##                continue
+            if self.dataset_size < min_data_size_to_learn:
+                print("dataset_size=",self.dataset_size," is less than ",min_data_size_to_learn)
+                sleep(300)
+                self.load_play_data()
+                continue
             self.update_learning_rate(total_steps)
             steps = self.train_epoch(self.config.trainer.epoch_to_checkpoint)
             total_steps += steps
             if last_save_step + self.config.trainer.save_model_steps < total_steps:
                 self.save_current_model()
                 last_save_step = total_steps
-
             if last_load_data_step + self.config.trainer.load_data_steps < total_steps:
                 self.load_play_data()
                 last_load_data_step = total_steps
@@ -94,6 +96,13 @@ class OptimizeWorker:
         weight_path = os.path.join(model_dir, rc.next_generation_model_weight_filename)
         self.model.save(config_path, weight_path)
 
+        print(config_path, weight_path)
+        # Saving File to Drop Box
+##        with open(weight_path, 'rb') as f:
+##            data = f.read()
+##        res = self.dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
+##        print('uploaded as', res.name.encode('utf8'))
+
     def collect_all_loaded_data(self):
         state_ary_list, policy_ary_list, z_ary_list = [], [], []
         for s_ary, p_ary, z_ary_ in self.loaded_data.values():
@@ -112,7 +121,13 @@ class OptimizeWorker:
             return 0
         return len(self.dataset[0])
 
-    def load_model(self):
+    def load_model(self):            
+        for entry in self.dbx.files_list_folder('/model').entries:
+            md, res = self.dbx.files_download('/model/'+entry.name)
+            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
+            #with open('./data/model/'+entry.name, 'wb') as f:  
+                f.write(res.content)
+
         from agent.model import GameModel
         model = GameModel(self.config)
         rc = self.config.resource
@@ -121,7 +136,6 @@ class OptimizeWorker:
         if not dirs:
             print("loading best model")
             if not load_best_model_weight(model):
-                #raise RuntimeError(f"Best model can not loaded!")
                 print("Best model can not loaded!")
         else:
             latest_dir = dirs[-1]
@@ -132,7 +146,13 @@ class OptimizeWorker:
         return model
 
     def load_play_data(self):
+        for entry in self.dbx.files_list_folder('/play_data').entries:
+            md, res = self.dbx.files_download('/play_data/'+entry.name)
+            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/play_data/'+entry.name, 'wb') as f:  
+            #with open('./data/play_data/'+entry.name, 'wb') as f:  
+                f.write(res.content)
         filenames = get_game_data_filenames(self.config.resource)
+        
         updated = False
         for filename in filenames:
             if filename in self.loaded_filenames:
