@@ -96,12 +96,13 @@ class OptimizeWorker:
         weight_path = os.path.join(model_dir, rc.next_generation_model_weight_filename)
         self.model.save(config_path, weight_path)
 
-        print(config_path, weight_path)
         # Saving File to Drop Box
-##        with open(weight_path, 'rb') as f:
-##            data = f.read()
-##        res = self.dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
-##        print('uploaded as', res.name.encode('utf8'))
+        with open(config_path, 'rb') as f:
+            data = f.read()
+        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+next_generation_model_config_filename, dropbox.files.WriteMode.add, mute=True)
+        with open(weight_path, 'rb') as f:
+            data = f.read()
+        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+next_generation_model_weight_filename, dropbox.files.WriteMode.add, mute=True)
 
     def collect_all_loaded_data(self):
         state_ary_list, policy_ary_list, z_ary_list = [], [], []
