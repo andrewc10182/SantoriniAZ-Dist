@@ -99,10 +99,10 @@ class OptimizeWorker:
         # Saving File to Drop Box
         with open(config_path, 'rb') as f:
             data = f.read()
-        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+next_generation_model_config_filename, dropbox.files.WriteMode.add, mute=True)
+        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+rc.next_generation_model_config_filename, dropbox.files.WriteMode.add, mute=True)
         with open(weight_path, 'rb') as f:
             data = f.read()
-        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+next_generation_model_weight_filename, dropbox.files.WriteMode.add, mute=True)
+        res = self.dbx.files_upload(data, '/model/next_generation/'+model_dir+'/'+rc.next_generation_model_weight_filename, dropbox.files.WriteMode.add, mute=True)
 
     def collect_all_loaded_data(self):
         state_ary_list, policy_ary_list, z_ary_list = [], [], []
