@@ -6,7 +6,9 @@ from config import Config
 from env.game_env import GameEnv, Winner, Player
 from src.lib import tf_util
 from src.lib.data_helper import get_game_data_filenames, write_game_data_to_file
-from src.lib.model_helpler import load_best_model_weight, save_as_best_model#, reload_best_model_weight_if_changed
+from src.lib.model_helpler import save_as_best_model, load_best_model_weight#, reload_best_model_weight_if_changed
+import dropbox
+import time
 
 def start(config: Config):
     tf_util.set_session_config(per_process_gpu_memory_fraction=0.2)
@@ -22,18 +24,38 @@ class SelfPlayWorker:
         self.buffer = []
 
     def start(self):
-        if self.model is None:
+        while True:
+            print('New Start Cycle ...')
+            # Get auth_token to set up dbx
+            auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
+            dbx = dropbox.Dropbox(auth_token)
+            
+            for entry in dbx.files_list_folder('/model').entries:
+                md, res = dbx.files_download('/model/'+entry.name)
+                with open('./data/model/'+entry.name, 'wb') as f:  
+                    f.write(res.content)
+            raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+                    
             self.model = self.load_model()
 
-        self.buffer = []
-        idx = 1
+            self.buffer = []
+            idx = 1
 
-        while True:
-            start_time = time()            
-            env = self.start_game(idx)
-            end_time = time()
-            print("game ",idx," time=",(end_time - start_time)," sec, turn=",env.turn," ", env.observation, env.winner)
-            idx += 1
+            CycleDone = False
+            while CycleDone == False:
+                print('Raw Time stamp:',raw_timestamp)
+                if(raw_timestamp!=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+                    print('Different timestamp, deleted play_data folder')
+                    for entry in dbx.files_list_folder('/play_data').entries:
+                        dbx.files_delete('/play_data/'+entry.name)
+                    raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+                    print('New Raw Time stamp:',raw_timestamp)
+                    CycleDone = True
+                start_time = time.time()            
+                env = self.start_game(idx)
+                end_time = time.time()
+                print("game ",idx," time=",(end_time - start_time)," sec, turn=",env.turn," ", env.observation, env.winner)
+                idx += 1
 
     def start_game(self, idx):
         self.env.reset()
@@ -68,13 +90,8 @@ class SelfPlayWorker:
         path = os.path.join(rc.play_data_dir, rc.play_data_filename_tmpl % game_id)
         print("save play data to ",path)
         write_game_data_to_file(path, self.buffer)
-
-        import dropbox
-
-        # Get auth_token to set up dbx
-        auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
-        dbx = dropbox.Dropbox(auth_token)
-
+        
+        # Saving File to Drop Box
         with open(path, 'rb') as f:
             data = f.read()
         res = dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
