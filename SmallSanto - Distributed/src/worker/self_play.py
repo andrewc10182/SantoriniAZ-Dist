@@ -32,7 +32,7 @@ class SelfPlayWorker:
             
             for entry in dbx.files_list_folder('/model').entries:
                 md, res = dbx.files_download('/model/'+entry.name)
-                with open('./data/model/'+entry.name, 'wb') as f:  
+                with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
                     f.write(res.content)
             raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
                     
