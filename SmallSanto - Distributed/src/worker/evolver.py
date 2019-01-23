@@ -39,11 +39,11 @@ class EvolverWorker:
                 self.version = int(entry.name[-4]) 
         self.model = self.load_model()
         self.compile_model()
-
+        min_data_size_to_learn = 50#5000
         while True:
             # Run Self Play if less than specific dataset size
             self.load_play_data()
-            min_data_size_to_learn = 200#5000
+            
             while self.dataset_size < min_data_size_to_learn:
                 print('Data size',self.dataset_size,'of',min_data_size_to_learn)
                 self.self_play()
@@ -56,6 +56,7 @@ class EvolverWorker:
                 # Evaluating
                 self.best_model = self.load_best_model()
                 RetrainSuccessful = self.evaluate()
+            self.dataset = None
 
     def self_play(self):
         self.model = self.load_model()
@@ -132,7 +133,6 @@ class EvolverWorker:
 
         for filename in (self.loaded_filenames - set(filenames)):
             self.unload_data_of_file(filename)
-            updated = True
 
         if updated:
             print("Updated Play Data.\n")
