@@ -39,7 +39,7 @@ class EvolverWorker:
                 self.version = int(entry.name[-4]) 
         self.model = self.load_model()
         self.compile_model()
-        min_data_size_to_learn = 10000
+        min_data_size_to_learn = 5000
         while True:
             # Run Self Play if less than specific dataset size
             self.load_play_data()
