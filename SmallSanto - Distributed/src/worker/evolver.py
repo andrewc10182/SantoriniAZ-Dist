@@ -207,19 +207,6 @@ class EvolverWorker:
         weight_path = os.path.join(model_dir, rc.next_generation_model_weight_filename)
         self.model.save(config_path, weight_path)
 
-        print('Model ID:',model_id)
-        print('Model dir:',model_dir)
-        print('config_path:',config_path)
-        print('weight_path:',weight_path)
-
-        # Saving File to Drop Box
-        with open(config_path, 'rb') as f:
-            data = f.read()
-        res = self.dbx.files_upload(data, '/model/next_generation/model_'+model_id+'/model_config.json', dropbox.files.WriteMode.add, mute=True)
-        with open(weight_path, 'rb') as f:
-            data = f.read()
-        res = self.dbx.files_upload(data, '/model/next_generation/model_'+model_id+'/model_weight.h5', dropbox.files.WriteMode.add, mute=True)
-
     def load_best_model(self):
         model = GameModel(self.config)
         load_best_model_weight(model)
