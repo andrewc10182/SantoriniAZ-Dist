@@ -5,7 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 
 win_unicode_console.enable()
 sys.dont_write_bytecode = True
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 if find_dotenv():
     load_dotenv(find_dotenv())
@@ -20,7 +20,7 @@ from config import Config
 
 def create_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("cmd", help="what to do", choices=['self', 'opt', 'eval', 'play_gui'])
+    parser.add_argument("cmd", help="what to do", choices=['self', 'opt', 'eval', 'play_gui', 'evolver'])
     parser.add_argument("--new", help="run from new best model", action="store_true")
     parser.add_argument("--type", help="use normal setting", default="normal")
     parser.add_argument("--total-step", help="set TrainerConfig.start_total_steps", type=int)
@@ -53,3 +53,6 @@ elif args.cmd == 'eval':
 elif args.cmd == 'play_gui':
     from play_game import gui
     gui.start(config)
+elif args.cmd == 'evolver':
+    from worker import evolver
+    evolver.start(config)
