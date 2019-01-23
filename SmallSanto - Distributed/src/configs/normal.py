@@ -1,7 +1,7 @@
 class EvaluateConfig:
     def __init__(self):
-        self.game_num = 60
-        self.replace_rate = 0.55
+        self.game_num = 61
+        self.replace_rate = 0.6
         self.play_config = PlayConfig()
         self.play_config.simulation_num_per_move = 5 #800
         self.play_config.thinking_loop = 2
@@ -9,11 +9,11 @@ class EvaluateConfig:
         self.play_config.change_tau_turn = 0
         self.play_config.noise_eps = 0
         self.evaluate_latest_first = True
-        self.next_generation_replace_rate = 0.55
+        self.next_generation_replace_rate = 0.6
         
 class PlayDataConfig:
     def __init__(self):
-        self.nb_game_in_file = 100
+        self.nb_game_in_file = 25
         self.max_file_num = 100  # 5000
 
 class PlayConfig:
@@ -33,7 +33,7 @@ class PlayConfig:
 
 class TrainerConfig:
     def __init__(self):
-        self.batch_size = 256  # 2048
+        self.batch_size = 64  # 2048
         self.epoch_to_checkpoint = 1 #30
         self.start_total_steps = 0
         self.save_model_steps = 25 # 150
