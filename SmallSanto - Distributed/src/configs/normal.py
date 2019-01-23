@@ -9,7 +9,7 @@ class EvaluateConfig:
         self.play_config.change_tau_turn = 0
         self.play_config.noise_eps = 0
         self.evaluate_latest_first = True
-        self.next_generation_replace_rate = 0.6
+        self.next_generation_replace_rate = 0.1
         
 class PlayDataConfig:
     def __init__(self):
