@@ -22,19 +22,20 @@ class SelfPlayWorker:
         self.black = None  # type: GamePlayer
         self.white = None  # type: GamePlayer
         self.buffer = []
-
+        self.dbx = None
     def start(self):
+        # Get auth_token to set up dbx
+        auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
+        self.dbx = dropbox.Dropbox(auth_token)
         while True:
             print('New Start Cycle ...')
-            # Get auth_token to set up dbx
-            auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
-            dbx = dropbox.Dropbox(auth_token)
             
-            for entry in dbx.files_list_folder('/model').entries:
-                md, res = dbx.files_download('/model/'+entry.name)
-                with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
-                    f.write(res.content)
-            raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+            for entry in self.dbx.files_list_folder('/model').entries:
+                if(entry.name!='HistoryVersion'):
+                    md, res = self.dbx.files_download('/model/'+entry.name)
+                    with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
+                        f.write(res.content)
+            raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
                     
             self.model = self.load_model()
 
@@ -44,11 +45,11 @@ class SelfPlayWorker:
             CycleDone = False
             while CycleDone == False:
                 print('Raw Time stamp:',raw_timestamp)
-                if(raw_timestamp!=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+                if(raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
                     print('Different timestamp, deleted play_data folder')
-                    for entry in dbx.files_list_folder('/play_data').entries:
-                        dbx.files_delete('/play_data/'+entry.name)
-                    raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+                    for entry in self.dbx.files_list_folder('/play_data').entries:
+                        self.dbx.files_delete('/play_data/'+entry.name)
+                    raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
                     print('New Raw Time stamp:',raw_timestamp)
                     CycleDone = True
                 start_time = time.time()            
@@ -94,7 +95,7 @@ class SelfPlayWorker:
         # Saving File to Drop Box
         with open(path, 'rb') as f:
             data = f.read()
-        res = dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
+        res = self.dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
         print('uploaded as', res.name.encode('utf8'))
 
         self.buffer = []
