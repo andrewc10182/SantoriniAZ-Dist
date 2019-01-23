@@ -48,6 +48,7 @@ class EvolverWorker:
                 print('Data size',self.dataset_size,'of',min_data_size_to_learn)
                 self.self_play()
                 self.load_play_data()
+            print('Training dataset ready for learning!')    
             RetrainSuccessful = False
             while(RetrainSuccessful == False):
                 # Training
@@ -134,7 +135,7 @@ class EvolverWorker:
             updated = True
 
         if updated:
-            print("Training dataset ready for learning!\n")
+            print("Updated Play Data.\n")
             self.dataset = self.collect_all_loaded_data()
 
     def load_data_from_file(self, filename):
