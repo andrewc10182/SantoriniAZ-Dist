@@ -255,7 +255,7 @@ class EvolverWorker:
     def evaluate_model(self, ng_model):
         results = []
         winning_rate = 0
-        for game_idx in range(self.config.eval.game_num):
+        for game_idx in range(1,self.config.eval.game_num+1):
             ng_win, white_is_best = self.play_game(self.best_model, ng_model)
             if ng_win is not None:
                 results.append(ng_win)
