@@ -34,7 +34,7 @@ class PlayConfig:
 class TrainerConfig:
     def __init__(self):
         self.batch_size = 64  # 2048
-        self.epoch_to_checkpoint = 1 #30
+        self.epoch_to_checkpoint = 50
         self.start_total_steps = 0
         self.save_model_steps = 25 # 150
         self.load_data_steps = 100 # 150
