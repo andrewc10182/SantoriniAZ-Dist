@@ -127,9 +127,10 @@ class EvolverWorker:
         
         updated = False
         for filename in filenames:
-            if filename in self.loaded_filenames:
-                continue
-            self.load_data_from_file(filename)
+            #if filename in self.loaded_filenames:
+            #    continue
+            if filename not in self.loaded_filenames:
+                self.load_data_from_file(filename)
             updated = True
 
         for filename in (self.loaded_filenames - set(filenames)):
