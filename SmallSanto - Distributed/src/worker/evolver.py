@@ -51,6 +51,7 @@ class EvolverWorker:
             print('Training dataset ready for learning!')    
             RetrainSuccessful = False
             while(RetrainSuccessful == False):
+                self.load_play_data()
                 # Training
                 self.training()
                 # Evaluating
