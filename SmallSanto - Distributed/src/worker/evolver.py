@@ -71,7 +71,7 @@ class EvolverWorker:
 
     def load_model(self):            
         for entry in self.dbx.files_list_folder('/model').entries:
-            if(entry.name!='HistoryVersion'):
+            if(entry.name!='HistoryVersion' and entry.name!='next_generation'):
                 md, res = self.dbx.files_download('/model/'+entry.name)
                 with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
                 #with open('./data/model/'+entry.name, 'wb') as f:  
