@@ -43,8 +43,8 @@ class EvolverWorker:
         while True:
             # Run Self Play if less than specific dataset size
             self.load_play_data()
-            min_data_size_to_learn = 5000
-            while self.dataset_size < min_data_size_to_learn: #min_data_size_to_learn: 5000
+            min_data_size_to_learn = 200#5000
+            while self.dataset_size < min_data_size_to_learn:
                 print('Data size',self.dataset_size,'of',min_data_size_to_learn)
                 self.self_play()
                 self.load_play_data()
