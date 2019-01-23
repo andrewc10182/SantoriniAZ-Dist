@@ -70,11 +70,11 @@ class EvolverWorker:
         
 
     def load_model(self):            
-##        for entry in self.dbx.files_list_folder('/model').entries:
-##            md, res = self.dbx.files_download('/model/'+entry.name)
-##            #with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
-##            with open('./data/model/'+entry.name, 'wb') as f:  
-##                f.write(res.content)
+        for entry in self.dbx.files_list_folder('/model').entries:
+            md, res = self.dbx.files_download('/model/'+entry.name)
+            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/'+entry.name, 'wb') as f:  
+            #with open('./data/model/'+entry.name, 'wb') as f:  
+                f.write(res.content)
 
         from agent.model import GameModel
         model = GameModel(self.config)
@@ -116,8 +116,8 @@ class EvolverWorker:
     def load_play_data(self):
         for entry in self.dbx.files_list_folder('/play_data').entries:
             md, res = self.dbx.files_download('/play_data/'+entry.name)
-            #with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/play_data/'+entry.name, 'wb') as f:  
-            with open('./data/play_data/'+entry.name, 'wb') as f:  
+            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/play_data/'+entry.name, 'wb') as f:  
+            #with open('./data/play_data/'+entry.name, 'wb') as f:  
                 f.write(res.content)
         filenames = get_game_data_filenames(self.config.resource)
         
@@ -235,7 +235,8 @@ class EvolverWorker:
 
             # Save to Drop Box inside History Version folder & save as best model in /model folder
             self.version = self.version+1
-            with open('./data/model/model_best_weight.h5', 'rb') as f:
+            with open('SantoriniAZ-Dist/SmallSanto - Distributed/data/model/model_best_weight.h5', 'rb') as f:
+            #with open('./data/model/model_best_weight.h5', 'rb') as f:
                 data = f.read()
             res = self.dbx.files_upload(data, '/model/HistoryVersion/Version'+"{0:0>4}".format(self.version) + '.h5', dropbox.files.WriteMode.add, mute=True)
             res = self.dbx.files_upload(data, '/model/model_best_weight.h5', dropbox.files.WriteMode.overwrite, mute=True)
