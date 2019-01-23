@@ -44,7 +44,7 @@ class SelfPlayWorker:
 
             CycleDone = False
             while CycleDone == False:
-                print('Raw Time stamp:',raw_timestamp)
+                print('Raw Time stamp:',raw_timestamp,'Current Dropbox Best Model Time stamp:',self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified)
                 if(raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
                     print('Different timestamp, deleted play_data folder')
                     for entry in self.dbx.files_list_folder('/play_data').entries:
@@ -52,6 +52,7 @@ class SelfPlayWorker:
                     raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
                     print('New Raw Time stamp:',raw_timestamp)
                     CycleDone = True
+                    continue
                 start_time = time.time()            
                 env = self.start_game(idx)
                 end_time = time.time()
