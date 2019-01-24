@@ -46,9 +46,9 @@ class SelfPlayWorker:
             while CycleDone == False:
                 #print('Raw Time stamp:',raw_timestamp,'Current Dropbox Best Model Time stamp:',self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified)
                 if(raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
-                    print('\n\nDifferent timestamp, deleted play_data folder')
-                    for entry in self.dbx.files_list_folder('/play_data').entries:
-                        self.dbx.files_delete('/play_data/'+entry.name)
+                    print('\n\nDifferent timestamp, a stronger model version is available')
+                    #for entry in self.dbx.files_list_folder('/play_data').entries:
+                    #    self.dbx.files_delete('/play_data/'+entry.name)
                     raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
                     print('New Raw Time stamp:',raw_timestamp)
                     CycleDone = True
