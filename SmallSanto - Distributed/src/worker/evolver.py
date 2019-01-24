@@ -51,7 +51,7 @@ class EvolverWorker:
                 self.self_play()
                 self.load_play_data()
             print('Training dataset ready for learning!')
-            self.raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+            self.raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
         
             RetrainSuccessful = False
             while(RetrainSuccessful == False):
@@ -280,7 +280,7 @@ class EvolverWorker:
     def play_game(self, best_model, ng_model):
         env = GameEnv().reset()
 
-        if(self.raw_timestamp!=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+        if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
             ng_win = 0
             best_is_white= 0
             return ng_win, best_is_white
