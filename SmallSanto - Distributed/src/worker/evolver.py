@@ -62,6 +62,8 @@ class EvolverWorker:
                 self.best_model = self.load_best_model()
                 RetrainSuccessful = self.evaluate()
                 if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+                    time.sleep(10)
+                    self.load_play_data()
                     break
             self.dataset = None
 
