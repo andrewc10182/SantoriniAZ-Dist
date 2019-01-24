@@ -31,6 +31,8 @@ class EvolverWorker:
         self.dbx = None
         self.version = 0 # Change to dynamic lookup from Drop Box Files
         self.env = GameEnv()
+        self.raw_timestamp=None
+        
     def start(self):
         auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
         self.dbx = dropbox.Dropbox(auth_token)
@@ -48,7 +50,9 @@ class EvolverWorker:
                 print('Data size',self.dataset_size,'of',min_data_size_to_learn)
                 self.self_play()
                 self.load_play_data()
-            print('Training dataset ready for learning!')    
+            print('Training dataset ready for learning!')
+            self.raw_timestamp=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
+        
             RetrainSuccessful = False
             while(RetrainSuccessful == False):
                 self.load_play_data()
@@ -276,6 +280,11 @@ class EvolverWorker:
     def play_game(self, best_model, ng_model):
         env = GameEnv().reset()
 
+        if(self.raw_timestamp!=dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+            ng_win = 0
+            best_is_white= 0
+            return ng_win, best_is_white
+    
         best_player = GamePlayer(self.config, best_model, play_config=self.config.eval.play_config)
         ng_player = GamePlayer(self.config, ng_model, play_config=self.config.eval.play_config)
         best_is_white = random() < 0.5
