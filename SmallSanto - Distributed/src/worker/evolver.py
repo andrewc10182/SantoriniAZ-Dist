@@ -50,7 +50,6 @@ class EvolverWorker:
             
             self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
             self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300)   
-            
             while self.play_files_on_dropbox < self.min_play_files_to_learn:
                 print('\nPlay Files Found:',self.play_files_on_dropbox,'of required',self.min_play_files_to_learn,'files. Started Self-Playing...\n')
                 self.self_play()
@@ -372,9 +371,12 @@ class EvolverWorker:
         write_game_data_to_file(path, self.buffer)
         
         # Saving File to Drop Box
-        with open(path, 'rb') as f:
-            data = f.read()
-        res = self.dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
+        self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
+        self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300)  
+        if self.play_files_on_dropbox < self.min_play_files_to_learn:            
+            with open(path, 'rb') as f:
+                data = f.read()
+            res = self.dbx.files_upload(data, '/play_data/'+filename, dropbox.files.WriteMode.add, mute=True)
         #print('uploaded as', res.name.encode('utf8'))
 
         self.buffer = []
