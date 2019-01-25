@@ -83,7 +83,7 @@ class EvolverWorker:
         for _ in range(self.config.play_data.nb_game_in_file):
             self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
             self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300) 
-            if(self.play_files_on_dropbox > self.min_play_files_to_learn):
+            if(self.play_files_on_dropbox >= self.min_play_files_to_learn):
                 print('\nTraining files sufficient for Learning, ending Self-Play...\n')
                 break
             start_time = time.time()            
