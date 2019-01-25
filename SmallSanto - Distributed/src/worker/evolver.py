@@ -33,6 +33,10 @@ class EvolverWorker:
         self.env = GameEnv()
         self.raw_timestamp=None
         
+        self.play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
+        self.max_play_files = 300 # at final there are alawys 7500 games to look at from previous 20 generations
+        self.min_play_files_to_learn = 0
+        self.play_files_on_dropbox = 0
     def start(self):
         auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
         self.dbx = dropbox.Dropbox(auth_token)
@@ -40,28 +44,23 @@ class EvolverWorker:
         self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
         print('\nThe Strongest Version found is: ',self.version,'\n')
         
-        play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
-        max_play_files = 300 # at final there are alawys 7500 games to look at from previous 20 generations
-        min_play_files_to_learn = min((self.version + 1) * play_files_per_generation, 300)
-        
         while True:
             self.model = self.load_model()
             self.compile_model()
-            # Run Self Play if less than specific dataset size
-            #self.load_play_data()
-            play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
             
-            while play_files_on_dropbox < min_play_files_to_learn:
-                print('Play Files Found:',play_files_on_dropbox,'of required',min_play_files_to_learn,'files to learn.')
+            self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
+            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300)   
+            
+            while self.play_files_on_dropbox < self.min_play_files_to_learn:
+                print('\nPlay Files Found:',self.play_files_on_dropbox,'of required',self.min_play_files_to_learn,'files. Started Self-Playing...\n')
                 self.self_play()
-                #self.load_play_data()
-            print('Training dataset ready for learning!')
+                self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
+            print('\nPlay Files Found:',self.play_files_on_dropbox,'of required',self.min_play_files_to_learn,'files. Training files sufficient for Learning!\n')
             self.load_play_data()
             self.raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
         
             RetrainSuccessful = False
             while(RetrainSuccessful == False):
-                self.load_play_data()
                 # Training
                 self.training()
                 # Evaluating
@@ -70,9 +69,7 @@ class EvolverWorker:
                 if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
                     time.sleep(20)
                     self.remove_all_play_data()
-                    for entry in self.dbx.files_list_folder('/model/HistoryVersion').entries:
-                        if self.version < int(entry.name[-7:-3]):
-                            self.version = int(entry.name[-7:-3]) 
+                    self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
                     print('\nThe Strongest Version found is: ',self.version,'\n')
                     break
             self.dataset = None
@@ -122,11 +119,8 @@ class EvolverWorker:
         self.model.model.compile(optimizer=self.optimizer, loss=losses)
 
     def training(self):
-        self.compile_model()
+        #self.compile_model()
         last_load_data_step = last_save_step = total_steps = self.config.trainer.start_total_steps
-
-        
-
         # Instead of infinitely training new model with the data, only train once and move on to 1 evaluation loop
         #while True:
 
