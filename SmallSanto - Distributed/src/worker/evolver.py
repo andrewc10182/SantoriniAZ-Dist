@@ -81,12 +81,15 @@ class EvolverWorker:
         idx = 1
 
         for _ in range(self.config.play_data.nb_game_in_file):
+            self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
+            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300) 
+            if(self.play_files_on_dropbox > self.min_play_files_to_learn):
+                continue
             start_time = time.time()            
             env = self.self_play_game(idx)
             end_time = time.time()
             print("Game",idx," Time=",(end_time - start_time)," sec, Turn=", env.turn, env.observation, env.winner)
             idx += 1
-        
 
     def load_model(self):            
         for entry in self.dbx.files_list_folder('/model').entries:
