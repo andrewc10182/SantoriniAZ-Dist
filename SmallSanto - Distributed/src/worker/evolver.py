@@ -36,22 +36,27 @@ class EvolverWorker:
     def start(self):
         auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
         self.dbx = dropbox.Dropbox(auth_token)
-        for entry in self.dbx.files_list_folder('/model/HistoryVersion').entries:
-            if self.version < int(entry.name[-7:-3]):
-                self.version = int(entry.name[-7:-3]) 
+        
+        self.version = len(dbx.files_list_folder('/model/HistoryVersion').entries)
         print('\nThe Strongest Version found is: ',self.version,'\n')
+        
         self.model = self.load_model()
         self.compile_model()
-        min_data_size_to_learn = 5000
+        play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
+        max_play_files = 300 # at final there are alawys 7500 games to look at from previous 20 generations
+        min_play_files_to_learn = min((self.version + 1) * play_files_per_generation, 300)
+        
         while True:
             # Run Self Play if less than specific dataset size
-            self.load_play_data()
+            #self.load_play_data()
+            play_files_on_dropbox = len(dbx.files_list_folder('/play_data').entries)
             
-            while self.dataset_size < min_data_size_to_learn:
-                print('Data size',self.dataset_size,'of',min_data_size_to_learn)
+            while play_files_on_dropbox < min_play_files_to_learn:
+                print('Play Files Found:',play_files_on_dropbox,'of required',min_play_files_to_learn,' files to learn.')
                 self.self_play()
-                self.load_play_data()
+                #self.load_play_data()
             print('Training dataset ready for learning!')
+            self.load_play_data()
             self.raw_timestamp=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified
         
             RetrainSuccessful = False
