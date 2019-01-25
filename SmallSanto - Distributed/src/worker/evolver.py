@@ -68,15 +68,13 @@ class EvolverWorker:
                 RetrainSuccessful = self.evaluate()
                 if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
                     time.sleep(20)
-                    self.remove_all_play_data()
+                    #self.remove_all_play_data()
                     self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
                     print('\nThe Strongest Version found is: ',self.version,'\n')
                     break
             self.dataset = None
 
     def self_play(self):
-        #self.model = self.load_model()
-        #self.model = self.compile_model()
         self.buffer = []
         idx = 1
 
@@ -125,9 +123,6 @@ class EvolverWorker:
     def training(self):
         #self.compile_model()
         last_load_data_step = last_save_step = total_steps = self.config.trainer.start_total_steps
-        # Instead of infinitely training new model with the data, only train once and move on to 1 evaluation loop
-        #while True:
-
         #self.update_learning_rate(total_steps)
         steps = self.train_epoch(self.config.trainer.epoch_to_checkpoint)
         total_steps += steps
@@ -250,9 +245,9 @@ class EvolverWorker:
             res = self.dbx.files_upload(data, '/model/model_best_weight.h5', dropbox.files.WriteMode.overwrite, mute=True)
 
             # Remove all files in Play Data in dropbox
-            for entry in self.dbx.files_list_folder('/play_data').entries:
-                self.dbx.files_delete('/play_data/'+entry.name)
-            self.remove_all_play_data()
+            #for entry in self.dbx.files_list_folder('/play_data').entries:
+            #    self.dbx.files_delete('/play_data/'+entry.name)
+            #self.remove_all_play_data()
         self.remove_model(model_dir)
         return ng_is_great
 
