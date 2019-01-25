@@ -37,8 +37,9 @@ class EvolverWorker:
         auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
         self.dbx = dropbox.Dropbox(auth_token)
         for entry in self.dbx.files_list_folder('/model/HistoryVersion').entries:
-            if self.version < int(entry.name[-4]):
-                self.version = int(entry.name[-4]) 
+            if self.version < int(entry.name[-7:-3]):
+                self.version = int(entry.name[-7:-3]) 
+        print('current latest version number is',self.version)
         self.model = self.load_model()
         self.compile_model()
         min_data_size_to_learn = 5000
