@@ -37,7 +37,7 @@ class EvolverWorker:
         auth_token = 'UlBTypwXWYAAAAAAAAAAEP6hKysZi9cQKGZTmMu128TYEEig00w3b3mJ--b_6phN'
         self.dbx = dropbox.Dropbox(auth_token)
         
-        self.version = len(dbx.files_list_folder('/model/HistoryVersion').entries)
+        self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
         print('\nThe Strongest Version found is: ',self.version,'\n')
         
         self.model = self.load_model()
@@ -49,7 +49,7 @@ class EvolverWorker:
         while True:
             # Run Self Play if less than specific dataset size
             #self.load_play_data()
-            play_files_on_dropbox = len(dbx.files_list_folder('/play_data').entries)
+            play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
             
             while play_files_on_dropbox < min_play_files_to_learn:
                 print('Play Files Found:',play_files_on_dropbox,'of required',min_play_files_to_learn,' files to learn.')
