@@ -39,7 +39,7 @@ class EvolverWorker:
         for entry in self.dbx.files_list_folder('/model/HistoryVersion').entries:
             if self.version < int(entry.name[-7:-3]):
                 self.version = int(entry.name[-7:-3]) 
-        print('current latest version number is',self.version)
+        print('\nThe Strongest Version found is: ',self.version,'\n')
         self.model = self.load_model()
         self.compile_model()
         min_data_size_to_learn = 5000
@@ -63,8 +63,12 @@ class EvolverWorker:
                 self.best_model = self.load_best_model()
                 RetrainSuccessful = self.evaluate()
                 if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
-                    time.sleep(10)
+                    time.sleep(20)
                     self.remove_all_play_data()
+                    for entry in self.dbx.files_list_folder('/model/HistoryVersion').entries:
+                        if self.version < int(entry.name[-7:-3]):
+                            self.version = int(entry.name[-7:-3]) 
+                    print('\nThe Strongest Version found is: ',self.version,'\n')
                     break
             self.dataset = None
 
