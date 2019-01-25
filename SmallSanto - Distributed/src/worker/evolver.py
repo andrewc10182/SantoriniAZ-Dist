@@ -40,7 +40,7 @@ class EvolverWorker:
         self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
         print('\nThe Strongest Version found is: ',self.version,'\n')
         
-        self.model = self.load_model()
+        #self.model = self.load_model()
         self.compile_model()
         play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
         max_play_files = 300 # at final there are alawys 7500 games to look at from previous 20 generations
@@ -52,7 +52,7 @@ class EvolverWorker:
             play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
             
             while play_files_on_dropbox < min_play_files_to_learn:
-                print('Play Files Found:',play_files_on_dropbox,'of required',min_play_files_to_learn,' files to learn.')
+                print('Play Files Found:',play_files_on_dropbox,'of required',min_play_files_to_learn,'files to learn.')
                 self.self_play()
                 #self.load_play_data()
             print('Training dataset ready for learning!')
