@@ -34,7 +34,7 @@ class EvolverWorker:
         self.raw_timestamp=None
         
         self.play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
-        self.max_play_files = 
+        self.max_play_files = 300
         
         # at final there are alawys 7500 games to look at from previous 20 generations
         self.min_play_files_to_learn = 0
@@ -51,7 +51,7 @@ class EvolverWorker:
             self.compile_model()
             
             self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
-            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300)   
+            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, self.max_play_files)   
             while self.play_files_on_dropbox < self.min_play_files_to_learn:
                 print('\nPlay Files Found:',self.play_files_on_dropbox,'of required',self.min_play_files_to_learn,'files. Started Self-Playing...\n')
                 self.self_play()
@@ -81,7 +81,7 @@ class EvolverWorker:
 
         for _ in range(self.config.play_data.nb_game_in_file):
             self.play_files_on_dropbox = len(self.dbx.files_list_folder('/play_data').entries)
-            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, 300) 
+            self.min_play_files_to_learn = min((self.version + 1) * self.play_files_per_generation, self.max_play_files) 
             if(self.play_files_on_dropbox >= self.min_play_files_to_learn):
                 print('Training files sufficient for Learning, ending Self-Play...')
                 break
