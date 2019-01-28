@@ -247,7 +247,7 @@ class EvolverWorker:
             files = get_game_data_filenames(self.config.resource)
             if(len(files)==300):
                 list = []
-                for entry in dbx.files_list_folder('/play_data').entries:
+                for entry in self.dbx.files_list_folder('/play_data').entries:
                     list.append(entry)
                 for i in range(14,-1,-1): #Remove the oldest 15 files
                     print('Removing local play_data file',i)
