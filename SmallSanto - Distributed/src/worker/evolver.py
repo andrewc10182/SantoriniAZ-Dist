@@ -72,7 +72,7 @@ class EvolverWorker:
                     print('\nThe Strongest Version found is: ',self.version,'\n')
                     break
             self.dataset = None
-
+                
     def self_play(self):
         self.buffer = []
         idx = 1
@@ -243,10 +243,18 @@ class EvolverWorker:
             res = self.dbx.files_upload(data, '/model/HistoryVersion/Version'+"{0:0>4}".format(self.version) + '.h5', dropbox.files.WriteMode.add, mute=True)
             res = self.dbx.files_upload(data, '/model/model_best_weight.h5', dropbox.files.WriteMode.overwrite, mute=True)
 
-            # Remove all files in Play Data in dropbox
-            #for entry in self.dbx.files_list_folder('/play_data').entries:
-            #    self.dbx.files_delete('/play_data/'+entry.name)
-            #self.remove_all_play_data()
+            # Remove the oldest 15 files if files is already 300
+            files = get_game_data_filenames(self.config.resource)
+            if(len(files)==300):
+                list = []
+                for entry in dbx.files_list_folder('/play_data').entries:
+                    list.append(entry)
+                for i in range(14,-1,-1): #Remove the oldest 15 files
+                    print('Removing local play_data file',i)
+                    os.remove(files[i])
+            # Also remove the oldest 15 files from dropbox
+                    print('Removing Dropbox play_data file',i,list[i].name)
+                    dbx.files_delete('/play_data/'+list[i].name)
         self.remove_model(model_dir)
         return ng_is_great
 
