@@ -255,8 +255,8 @@ class EvolverWorker:
                     print('Removing Dropbox play_data file',i,list[i].name)
                     self.dbx.files_delete('/play_data/'+list[i].name)
                   
-                    print('Removing local play_data file',file[i])
-                    path = os.path.join(self.config.resource.play_data_dir,file[i])
+                    print('Removing local play_data file',list[i].name)
+                    path = os.path.join(self.config.resource.play_data_dir,list[i].name)
                     os.remove(path)
         self.remove_model(model_dir)
         return ng_is_great
