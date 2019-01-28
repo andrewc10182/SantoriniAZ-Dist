@@ -254,7 +254,7 @@ class EvolverWorker:
                     os.remove(files[i])
             # Also remove the oldest 15 files from dropbox
                     print('Removing Dropbox play_data file',i,list[i].name)
-                    dbx.files_delete('/play_data/'+list[i].name)
+                    self.dbx.files_delete('/play_data/'+list[i].name)
         self.remove_model(model_dir)
         return ng_is_great
 
