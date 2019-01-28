@@ -34,7 +34,9 @@ class EvolverWorker:
         self.raw_timestamp=None
         
         self.play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
-        self.max_play_files = 300 # at final there are alawys 7500 games to look at from previous 20 generations
+        self.max_play_files = 
+        
+        # at final there are alawys 7500 games to look at from previous 20 generations
         self.min_play_files_to_learn = 0
         self.play_files_on_dropbox = 0
     def start(self):
@@ -244,17 +246,18 @@ class EvolverWorker:
             res = self.dbx.files_upload(data, '/model/model_best_weight.h5', dropbox.files.WriteMode.overwrite, mute=True)
 
             # Remove the oldest 15 files if files is already 300
-            files = get_game_data_filenames(self.config.resource)
-            if(len(files)==300):
-                list = []
-                for entry in self.dbx.files_list_folder('/play_data').entries:
-                    list.append(entry)
+            list = []
+            for entry in self.dbx.files_list_folder('/play_data').entries:
+                list.append(entry)
+            if(len(list)==300):
                 for i in range(14,-1,-1): #Remove the oldest 15 files
-                    print('Removing local play_data file',i)
-                    os.remove(files[i])
             # Also remove the oldest 15 files from dropbox
                     print('Removing Dropbox play_data file',i,list[i].name)
                     self.dbx.files_delete('/play_data/'+list[i].name)
+                  
+                    print('Removing local play_data file',file[i])
+                    path = os.path.join(self.config.resource.play_data_dir,file[i])
+                    os.remove(path)
         self.remove_model(model_dir)
         return ng_is_great
 
