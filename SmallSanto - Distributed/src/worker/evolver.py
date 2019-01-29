@@ -76,10 +76,13 @@ class EvolverWorker:
                     
                     # Also remove the oldest 15 files from dropbox
                     localfiles = get_game_data_filenames(self.config.resource)
+                    localfilenames = []
+                    for a in range(len(localfiles)):
+                        localfilenames.append(localfiles[a][-32:])
                     dbfiles = []
                     for entry in self.dbx.files_list_folder('/play_data').entries:
                         dbfiles.append(entry.name)
-                    localfiles_to_remove = set(localfiles) - set(dbfiles)
+                    localfiles_to_remove = set(localfilenames) - set(dbfiles)
                     print('Removing',len(localfiles_to_remove),'files from local drive')
                     for file in localfiles_to_remove:
                         print('Removing local play_data file',file)
