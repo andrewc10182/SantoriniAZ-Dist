@@ -68,10 +68,23 @@ class EvolverWorker:
                 self.best_model = self.load_best_model()
                 RetrainSuccessful = self.evaluate()
                 if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
+                    # Other Evolvers in Distribution already got a successful competition - cease this current eval.
                     time.sleep(20)
                     #self.remove_all_play_data()
                     self.version = len(self.dbx.files_list_folder('/model/HistoryVersion').entries)
                     print('\nThe Strongest Version found is: ',self.version,'\n')
+                    
+                    # Also remove the oldest 15 files from dropbox
+                    localfiles = get_game_data_filenames(self.config.resource)
+                    dbfiles = []
+                    for entry in self.dbx.files_list_folder('/play_data').entries:
+                        dbfiles.append(entry.name)
+                    localfiles_to_remove = set(localfiles) - set(dbfiles)
+                    print('Removing',len(localfiles_to_remove),'files from local drive')
+                    for file in localfiles_to_remove:
+                        print('Removing local play_data file',file)
+                        path = os.path.join(self.config.resource.play_data_dir,file)
+                        os.remove(path)
                     break
             self.dataset = None
                 
@@ -250,8 +263,7 @@ class EvolverWorker:
             for entry in self.dbx.files_list_folder('/play_data').entries:
                 list.append(entry)
             if(len(list)==300):
-                for i in range(14,-1,-1): #Remove the oldest 15 files
-            # Also remove the oldest 15 files from dropbox
+                for i in range(14,-1,-1): #Remove the oldest 15 files in both DropBox and Local
                     print('Removing Dropbox play_data file',i,list[i].name)
                     self.dbx.files_delete('/play_data/'+list[i].name)
                   
