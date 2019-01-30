@@ -284,11 +284,11 @@ class GameEnv:
 
     def check_for_win(self):
         if(any("D" in sublist for sublist in self.board)):
-            self.winner = Winner.black
+            self.winner = Winner.white#black
             self.done = True
             return
         if(any("Z" in sublist2 for sublist2 in self.board)): # Finds
-            self.winner = Winner.white
+            self.winner = Winner.black#white
             self.done = True
             return
 
