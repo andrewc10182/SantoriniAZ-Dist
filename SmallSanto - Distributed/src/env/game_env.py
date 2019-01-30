@@ -56,7 +56,7 @@ class GameEnv:
 
     def step(self, action):
         #print('Board Before Action:\n',self.board)
-        if action == 0 and sum(self.legal_moves())==0:
+        if action == 0 or sum(self.legal_moves())==0:
             self._resigned()
             return self.board, {}
         if action==999: # A setting move at the beginning of game
@@ -293,7 +293,7 @@ class GameEnv:
             return
 
     def _resigned(self):
-        if self.player_turn() == Player.white:
+        if self.player_turn() == Player.black: #white:
             self.winner = Winner.white
         else:
             self.winner = Winner.black
