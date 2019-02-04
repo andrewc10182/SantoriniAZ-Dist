@@ -101,9 +101,9 @@ class GamePlayer:
         """
         if env.done:
             if env.winner == Winner.white:
-                return 1
+                return -1 # White goes second
             elif env.winner == Winner.black:
-                return -1
+                return 1 # Black goes first
             else:
                 return 0
 
