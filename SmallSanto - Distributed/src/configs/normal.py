@@ -4,8 +4,8 @@ class EvaluateConfig:
         self.replace_rate = 0.6
         self.play_config = PlayConfig()
         self.play_config.simulation_num_per_move = 800
-        self.play_config.thinking_loop = 2
-        self.play_config.c_puct = 1
+        self.play_config.thinking_loop = 1 #2
+        self.play_config.c_puct = 1.5
         self.play_config.change_tau_turn = 0
         self.play_config.noise_eps = 0
         self.evaluate_latest_first = True
@@ -24,7 +24,7 @@ class PlayConfig:
         self.c_puct = 1.5 #2
         self.noise_eps = 0.25
         self.dirichlet_alpha = 0.03
-        self.change_tau_turn = 10
+        self.change_tau_turn = 4 #10
         self.virtual_loss = 3
         self.prediction_queue_size = 16
         self.parallel_search_num = 8 #2
