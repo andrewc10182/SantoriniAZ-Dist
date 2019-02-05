@@ -146,8 +146,10 @@ class GamePlayer:
         key = self.counter_key(env)
         self.now_expanding.add(key)
 
-        black_ary, white_ary = env.black_and_white_plane()
-        state = [black_ary, white_ary] if env.player_turn() == Player.black else [white_ary, black_ary]
+        white_ary, black_ary , block_ary, turn_ary = env.black_and_white_plane()
+        #state = [black_ary, white_ary, block_ary, turn_ary] if env.player_turn() == Player.black else [white_ary, black_ary, block_ary, turn_ary]
+        state = [white_ary, black_ary, block_ary, turn_ary]
+        
         future = await self.predict(np.array(state))  # type: Future
         await future
         leaf_p, leaf_v = future.result()
