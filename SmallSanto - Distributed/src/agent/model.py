@@ -22,7 +22,7 @@ class GameModel:
 
     def build(self):
         mc = self.config.model
-        in_x = x = Input((2, 3, 3))
+        in_x = x = Input((4, 3, 3))
 
         # (batch, channels, height, width)
         x = Conv2D(filters=mc.cnn_filter_num, kernel_size=mc.cnn_filter_size, padding="same", data_format="channels_first", kernel_regularizer=l2(mc.l2_reg))(x)
