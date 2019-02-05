@@ -324,8 +324,10 @@ class EvolverWorker:
         ng_player = GamePlayer(self.config, ng_model, play_config=self.config.eval.play_config)
         best_is_white = random() < 0.5
         if not best_is_white:
+            print('Challenger Playing as White...!')
             black, white = best_player, ng_player
         else:
+            print('Challenger Playing as Black...!')
             black, white = ng_player, best_player
 
         env.reset()
