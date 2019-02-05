@@ -371,7 +371,7 @@ class GameEnv:
         #print('Board black:\n',board_black,'\n')
         #print('Blocks:\n',board_blocks,'\n')
         #print('Board Turn:\n',board_turn)
-        return np.array(board_white), np.array(board_black), np.array(board_blocks), np.array(board_turn)
+    return np.array(board_white), np.array(board_black), np.array(board_blocks), np.array(board_turn)
 
 
     def render(self):
