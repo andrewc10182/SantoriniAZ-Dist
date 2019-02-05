@@ -300,7 +300,14 @@ class EvolverWorker:
             if ng_win is not None:
                 results.append(ng_win)
                 winning_rate = sum(results) / len(results)
-            print('Game', game_idx,': New Gen win?=',ng_win,"Winning rate ",winning_rate)
+            if(ng_win==1 and white_is_best):
+                print('Game', game_idx,': Wins with Black.  Winning rate ',winning_rate)
+            elif(ng_win==1 and not white_is_best):
+                print('Game', game_idx,': Wins with White.  Winning rate ',winning_rate)
+            elif(ng_win==0 and white_is_best):
+                print('Game', game_idx,': Loses with Black.  Winning rate ',winning_rate)
+            elif(ng_win==0 and not white_is_best):
+                print('Game', game_idx,': Loses with White.  Winning rate ',winning_rate)
             if results.count(0) >= self.config.eval.game_num * (1-self.config.eval.replace_rate):
                 print("Lose count reach", results.count(0)," so give up challenge\n")
                 break
@@ -324,10 +331,8 @@ class EvolverWorker:
         ng_player = GamePlayer(self.config, ng_model, play_config=self.config.eval.play_config)
         self.best_is_white = not self.best_is_white
         if not self.best_is_white:
-            print('Challenger Playing as White...!')
             black, white = best_player, ng_player
         else:
-            print('Challenger Playing as Black...!')
             black, white = ng_player, best_player
 
         env.reset()
