@@ -32,7 +32,7 @@ class EvolverWorker:
         self.version = 0 # Change to dynamic lookup from Drop Box Files
         self.env = GameEnv()
         self.raw_timestamp=None
-        
+        self.best_is_white = True
         self.play_files_per_generation = 15 # each file includes 25 games so each generation adds 375 games
         self.max_play_files = 300
         
@@ -317,13 +317,13 @@ class EvolverWorker:
         if(self.raw_timestamp!=self.dbx.files_get_metadata('/model/model_best_weight.h5').client_modified):
             print('A newer model version is available - giving up this match')
             ng_win = 0
-            best_is_white= 0
-            return ng_win, best_is_white
+            self.best_is_white= True
+            return ng_win, self.best_is_white
     
         best_player = GamePlayer(self.config, best_model, play_config=self.config.eval.play_config)
         ng_player = GamePlayer(self.config, ng_model, play_config=self.config.eval.play_config)
-        best_is_white = random() < 0.5
-        if not best_is_white:
+        self.best_is_white = not self.best_is_white
+        if not self.best_is_white:
             print('Challenger Playing as White...!')
             black, white = best_player, ng_player
         else:
@@ -340,16 +340,16 @@ class EvolverWorker:
 
         ng_win = None
         if env.winner == Winner.white:
-            if best_is_white:
+            if self.best_is_white:
                 ng_win = 0
             else:
                 ng_win = 1
         elif env.winner == Winner.black:
-            if best_is_white:
+            if self.best_is_white:
                 ng_win = 1
             else:
                 ng_win = 0
-        return ng_win, best_is_white
+        return ng_win, self.best_is_white
 
     def remove_model(self, model_dir):
         rc = self.config.resource
