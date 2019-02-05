@@ -300,7 +300,7 @@ class GameEnv:
         self.done = True
         self.resigned = True
 
-   def black_and_white_plane(self):
+    def black_and_white_plane(self):
         #print('\n\nBoard now:\n',self.board,'\n')
         board_white = np.copy(self.board)
         board_black = np.copy(self.board)
@@ -371,7 +371,7 @@ class GameEnv:
         #print('Board black:\n',board_black,'\n')
         #print('Blocks:\n',board_blocks,'\n')
         #print('Board Turn:\n',board_turn)
-    return np.array(board_white), np.array(board_black), np.array(board_blocks), np.array(board_turn)
+        return np.array(board_white), np.array(board_black), np.array(board_blocks), np.array(board_turn)
 
 
     def render(self):
