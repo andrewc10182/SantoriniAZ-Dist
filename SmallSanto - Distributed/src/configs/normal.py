@@ -1,7 +1,7 @@
 class EvaluateConfig:
     def __init__(self):
         self.game_num = 31
-        self.replace_rate = 0.6
+        self.replace_rate = 0.64
         self.play_config = PlayConfig()
         self.play_config.simulation_num_per_move = 100 #800
         self.play_config.thinking_loop = 1 #2
