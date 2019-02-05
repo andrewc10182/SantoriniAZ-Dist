@@ -206,8 +206,9 @@ class EvolverWorker:
             board = np.reshape(board, (3, 3))
             env = GameEnv().update(board)
 
-            black_ary, white_ary = env.black_and_white_plane()
-            state = [black_ary, white_ary] if env.player_turn() == Player.black else [white_ary, black_ary]
+            white_ary, black_ary, block_ary, turn_ary = env.black_and_white_plane()
+            #state = [black_ary, white_ary, block_ary, turn_ary] if env.player_turn() == Player.black else [white_ary, black_ary, block_ary, turn_ary]
+            state = [white_ary, black_ary, block_ary, turn_ary]
 
             state_list.append(state)
             policy_list.append(policy)
