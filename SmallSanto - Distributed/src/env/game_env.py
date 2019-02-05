@@ -300,21 +300,79 @@ class GameEnv:
         self.done = True
         self.resigned = True
 
-    def black_and_white_plane(self):
+   def black_and_white_plane(self):
+        #print('\n\nBoard now:\n',self.board,'\n')
         board_white = np.copy(self.board)
         board_black = np.copy(self.board)
+        board_blocks = np.copy(self.board)
+        board_turn = np.copy(self.board)
+        for i in range(3):
+            for j in range(3):
+                if(self.turn_n()%2==0):
+                    board_turn[i][j] = 1
+                else:
+                    board_turn[i][j] = 0
         for i in range(3):
             for j in range(3):
                 if self.board[i][j] == ' ':
                     board_white[i][j] = 0
                     board_black[i][j] = 0
-                elif self.board[i][j] == 'W' or self.board[i][j] == 'X' or self.board[i][j] == 'Y' or self.board[i][j] == 'Z':
+                    board_blocks[i][j] = 0
+                elif self.board[i][j] == 'A':
                     board_white[i][j] = 1
                     board_black[i][j] = 0
-                elif self.board[i][j] == 'A' or self.board[i][j] == 'B' or self.board[i][j] == 'C' or self.board[i][j] == 'D':
+                    board_blocks[i][j] = 0
+                elif self.board[i][j] == 'B':
+                    board_white[i][j] = 1
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 1
+                elif self.board[i][j] == 'C':
+                    board_white[i][j] = 1
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 2
+                elif self.board[i][j] == 'D':
+                    board_white[i][j] = 1
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 3
+                elif self.board[i][j] == 'W':
                     board_white[i][j] = 0
                     board_black[i][j] = 1
-        return np.array(board_white), np.array(board_black)
+                    board_blocks[i][j] = 0
+                elif self.board[i][j] == 'X':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 1
+                    board_blocks[i][j] = 1
+                elif self.board[i][j] == 'Y':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 1
+                    board_blocks[i][j] = 2
+                elif self.board[i][j] == 'Z':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 1
+                    board_blocks[i][j] = 3
+                elif self.board[i][j] == '1':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 1
+                elif self.board[i][j] == '2':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 2
+                elif self.board[i][j] == '3':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 3
+                elif self.board[i][j] == '4':
+                    board_white[i][j] = 0
+                    board_black[i][j] = 0
+                    board_blocks[i][j] = 4
+
+        #print('Board_white:\n',board_white,'\n')
+        #print('Board black:\n',board_black,'\n')
+        #print('Blocks:\n',board_blocks,'\n')
+        #print('Board Turn:\n',board_turn)
+        return np.array(board_white), np.array(board_black), np.array(board_blocks), np.array(board_turn)
+
 
     def render(self):
         print("\nRound: " + str(self.turn))
